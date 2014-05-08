@@ -37,18 +37,17 @@ typedef NS_ENUM(NSUInteger, BRLOptionParserErrorCode) {
 };
 
 
-@interface BRLOptionParser : NSObject + (instancetype) parser;  + (instancetype) longOnlyParser;
+@interface BRLOptionParser : NSObject @property  BOOL longOnly;
 
-@property (nonatomic, getter = isLongOnly) BOOL longOnly;
-@property (nonatomic, copy)            NSString *banner;
++ (instancetype) parserWithBanner:(NSString*)banner, ...;
 
-- (void) setBanner:(NSString *)banner, ...;
+- (void) getOpt:(char*)o flag:(unichar)f desc:(NSString*)d res:(void(^)(id res))res;
 
-- (void) addOption:(char*)o flag:(unichar)f description:(NSString*)d block:(BRLOptionParserOptionBlock)b;
-- (void) addOption:(char*)o flag:(unichar)f description:(NSString*)d blockWithArgument:(BRLOptionParserOptionBlockWithArgument)blockWithArgument;
+- (void) addOpt:(char*)o flag:(unichar)f desc:(NSString*)d block:(BRLOptionParserOptionBlock)b;
+- (void) addOpt:(char*)o flag:(unichar)f desc:(NSString*)d blockArg:(BRLOptionParserOptionBlockWithArgument)bArg;
 
-- (void) addOption:(char*)o flag:(unichar)f description:(NSString*)d    value:(BOOL *)value;
-- (void) addOption:(char*)o flag:(unichar)f description:(NSString*)d argument:(NSString *__strong *)argument;
+- (void) addOpt:(char*)o flag:(unichar)f desc:(NSString*)d value:(BOOL *)value;
+- (void) addOpt:(char*)o flag:(unichar)f desc:(NSString*)d arg:(NSString *__strong *)argument;
 
 - (void) addSeparator;
 - (void) addSeparator:(NSString*)s;

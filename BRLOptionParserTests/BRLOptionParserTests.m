@@ -5,17 +5,17 @@
 SPEC_BEGIN(BRLOptionParserSpec)
 
 describe(@"BRLOptionParser", ^{
-    __block BRLOptionParser *options;
+    __block BRLOptionParser *os;
     __block NSError *error;
 
     beforeEach(^{
         optind = 1;
-        options = [BRLOptionParser new];
+        os = [BRLOptionParser new];
         error = nil;
     });
 
     context(@"parsing", ^{
-        context(@"options without arguments", ^{
+        context(@"os without arguments", ^{
             __block BOOL flag;
             __block char * argument;
 
@@ -25,13 +25,13 @@ describe(@"BRLOptionParser", ^{
             });
 
             it(@"calls blocks", ^{
-                [options addOption:NULL flag:'h' description:nil block:^{
+                [os addOpt:NULL flag:'h' desc:nil block:^{
                     flag = YES;
                 }];
             });
 
             it(@"casts boolean values", ^{
-                [options addOption:NULL flag:'h' description:nil value:&flag];
+                [os addOpt:NULL flag:'h' desc:nil value:&flag];
             });
 
             context(@"long options", ^{
@@ -40,30 +40,30 @@ describe(@"BRLOptionParser", ^{
                 });
 
                 it(@"calls blocks", ^{
-                    [options addOption:"help" flag:0 description:nil block:^{
+                    [os addOpt:"help" flag:0 desc:nil block:^{
                         flag = YES;
                     }];
                 });
 
                 it(@"casts boolean values", ^{
-                    [options addOption:"help" flag:0 description:nil value:&flag];
+                    [os addOpt:"help" flag:0 desc:nil value:&flag];
                 });
 
                 context(@"with short aliases", ^{
                     it(@"calls blocks", ^{
-                        [options addOption:"help" flag:'h' description:nil block:^{
+                        [os addOpt:"help" flag:'h' desc:nil block:^{
                             flag = YES;
                         }];
                     });
 
                     it(@"casts boolean values", ^{
-                        [options addOption:"help" flag:'h' description:nil value:&flag];
+                        [os addOpt:"help" flag:'h' desc:nil value:&flag];
                     });
 
                     afterEach(^{
                         int argc = 2;
                         const char * argv[] = {"app", "-h", 0};
-                        [[@([options parseArgc:argc argv:argv error:&error]) should] beYes];
+                        [[@([os parseArgc:argc argv:argv error:&error]) should] beYes];
                         [[error should] beNil];
                     });
                 });
@@ -72,13 +72,13 @@ describe(@"BRLOptionParser", ^{
             afterEach(^{
                 int argc = 2;
                 const char * argv[] = {"app", argument, 0};
-                [[@([options parseArgc:argc argv:argv error:&error]) should] beYes];
+                [[@([os parseArgc:argc argv:argv error:&error]) should] beYes];
                 [[error should] beNil];
                 [[@(flag) should] beYes];
             });
         });
 
-        context(@"options with arguments", ^{
+        context(@"os with arguments", ^{
             __block NSString *string;
             __block char * argument;
 
@@ -89,13 +89,13 @@ describe(@"BRLOptionParser", ^{
 
             context(@"that are set", ^{
                 it(@"calls blocks with arguments", ^{
-                    [options addOption:NULL flag:'H' description:nil blockWithArgument:^(NSString *value) {
+                    [os addOpt:NULL flag:'H' desc:nil blockArg:^(NSString *value) {
                         string = value;
                     }];
                 });
 
                 it(@"casts string arguments", ^{
-                    [options addOption:NULL flag:'H' description:nil argument:&string];
+                    [os addOpt:NULL flag:'H' desc:nil arg:&string];
                 });
 
                 context(@"long options", ^{
@@ -104,30 +104,30 @@ describe(@"BRLOptionParser", ^{
                     });
 
                     it(@"calls blocks with arguments", ^{
-                        [options addOption:"hello" flag:0 description:nil blockWithArgument:^(NSString *value) {
+                        [os addOpt:"hello" flag:0 desc:nil blockArg:^(NSString *value) {
                             string = value;
                         }];
                     });
 
                     it(@"casts string arguments", ^{
-                        [options addOption:"hello" flag:0 description:nil argument:&string];
+                        [os addOpt:"hello" flag:0 desc:nil arg:&string];
                     });
 
                     context(@"with short aliases", ^{
                         it(@"calls blocks with arguments", ^{
-                            [options addOption:"hello" flag:'H' description:nil blockWithArgument:^(NSString *value) {
+                            [os addOpt:"hello" flag:'H' desc:nil blockArg:^(NSString *value) {
                                 string = value;
                             }];
                         });
 
                         it(@"casts string arguments", ^{
-                            [options addOption:"hello" flag:'H' description:nil argument:&string];
+                            [os addOpt:"hello" flag:'H' desc:nil arg:&string];
                         });
 
                         afterEach(^{
                             int argc = 3;
                             const char * argv[] = {"app", "-H", "world", 0};
-                            [[@([options parseArgc:argc argv:argv error:&error]) should] beYes];
+                            [[@([os parseArgc:argc argv:argv error:&error]) should] beYes];
                             [[error should] beNil];
                         });
                     });
@@ -136,7 +136,7 @@ describe(@"BRLOptionParser", ^{
                 afterEach(^{
                     int argc = 3;
                     const char * argv[] = {"app", argument, "world", 0};
-                    [[@([options parseArgc:argc argv:argv error:&error]) should] beYes];
+                    [[@([os parseArgc:argc argv:argv error:&error]) should] beYes];
                     [[error should] beNil];
                     [[string should] equal:@"world"];
                 });
@@ -146,14 +146,14 @@ describe(@"BRLOptionParser", ^{
                 __block BOOL flag = NO;
 
                 beforeEach(^{
-                    [options addOption:"hello" flag:'H' description:nil argument:&string];
-                    [options addOption:"verbose" flag:'v' description:nil value:&flag];
+                    [os addOpt:"hello" flag:'H' desc:nil arg:&string];
+                    [os addOpt:"verbose" flag:'v' desc:nil value:&flag];
                 });
 
                 it(@"fails with a short option", ^{
                     int argc = 2;
                     const char * argv[] = {"app", "-vH", 0};
-                    [[@([options parseArgc:argc argv:argv error:&error]) should] beNo];
+                    [[@([os parseArgc:argc argv:argv error:&error]) should] beNo];
                     [[error shouldNot] beNil];
                     [[@([error code]) should] equal:@(BRLOptionParserErrorCodeRequired)];
                     [[[error localizedDescription] should] equal:@"option `-H' requires an argument"];
@@ -162,7 +162,7 @@ describe(@"BRLOptionParser", ^{
                 it(@"fails with a long option", ^{
                     int argc = 3;
                     const char * argv[] = {"app", "--verbose", "--hello", 0};
-                    [[@([options parseArgc:argc argv:argv error:&error]) should] beNo];
+                    [[@([os parseArgc:argc argv:argv error:&error]) should] beNo];
                     [[error shouldNot] beNil];
                     [[@([error code]) should] equal:@(BRLOptionParserErrorCodeRequired)];
                     [[[error localizedDescription] should] equal:@"option `--hello' requires an argument"];
@@ -173,10 +173,10 @@ describe(@"BRLOptionParser", ^{
         context(@"unrecognized arguments", ^{
             it(@"fails with a short option", ^{
                 BOOL flag = NO;
-                [options addOption:NULL flag:'h' description:nil value:&flag];
+                [os addOpt:NULL flag:'h' desc:nil value:&flag];
                 int argc = 2;
                 const char * argv[] = {"app", "-hi", 0};
-                [[@([options parseArgc:argc argv:argv error:&error]) should] beNo];
+                [[@([os parseArgc:argc argv:argv error:&error]) should] beNo];
                 [[error shouldNot] beNil];
                 [[@([error code]) should] equal:@(BRLOptionParserErrorCodeUnrecognized)];
                 [[[error localizedDescription] should] equal:@"unrecognized option `-i'"];
@@ -185,7 +185,7 @@ describe(@"BRLOptionParser", ^{
             it(@"fails with a long option", ^{
                 int argc = 2;
                 const char * argv[] = {"app", "--hello=world", 0};
-                [[@([options parseArgc:argc argv:argv error:&error]) should] beNo];
+                [[@([os parseArgc:argc argv:argv error:&error]) should] beNo];
                 [[error shouldNot] beNil];
                 [[@([error code]) should] equal:@(BRLOptionParserErrorCodeUnrecognized)];
                 [[[error localizedDescription] should] equal:@"unrecognized option `--hello'"];
@@ -194,15 +194,15 @@ describe(@"BRLOptionParser", ^{
 
         context(@"long-only", ^{
             beforeEach(^{
-                options.longOnly = YES;
+                os.longOnly = YES;
             });
 
             it(@"works", ^{
                 BOOL flag = NO;
-                [options addOption:"help" flag:0 description:nil value:&flag];
+                [os addOpt:"help" flag:0 desc:nil value:&flag];
                 int argc = 2;
                 const char * argv[] = {"app", "-help", 0};
-                [[@([options parseArgc:argc argv:argv error:&error]) should] beYes];
+                [[@([os parseArgc:argc argv:argv error:&error]) should] beYes];
                 [[error should] beNil];
                 [[@(flag) should] beYes];
             });
@@ -210,10 +210,10 @@ describe(@"BRLOptionParser", ^{
             context(@"with arguments", ^{
                 it(@"fails with a proper error", ^{
                     NSString *string = nil;
-                    [options addOption:"hello" flag:0 description:nil argument:&string];
+                    [os addOpt:"hello" flag:0 desc:nil arg:&string];
                     int argc = 2;
                     const char * argv[] = {"app", "-hello", 0};
-                    [[@([options parseArgc:argc argv:argv error:&error]) should] beNo];
+                    [[@([os parseArgc:argc argv:argv error:&error]) should] beNo];
                     [[error shouldNot] beNil];
                     [[@([error code]) should] equal:@(BRLOptionParserErrorCodeRequired)];
                     [[[error localizedDescription] should] equal:@"option `-hello' requires an argument"];
@@ -222,10 +222,10 @@ describe(@"BRLOptionParser", ^{
         });
 
         it(@"works with a separator", ^{
-            [options addSeparator];
+            [os addSeparator];
             int argc = 1;
             const char * argv[] = {"app", 0};
-            [[@([options parseArgc:argc argv:argv error:&error]) should] beYes];
+            [[@([os parseArgc:argc argv:argv error:&error]) should] beYes];
             [[error should] beNil];
         });
     });
@@ -237,28 +237,27 @@ describe(@"BRLOptionParser", ^{
                 @"usage: xctest [options]\n";
 
                 [[NSProcessInfo processInfo] stub:@selector(processName) andReturn:@"xctest"];
-                [[[options description] should] equal:usage];
+                [[[os description] should] equal:usage];
             });
 
             it(@"prints custom overrides", ^{
-                NSString *usage =
-                @"usage: expected [OPTIONS]\n";
+                NSString *usage = @"usage: expected [OPTIONS]\n";
 
-                [options setBanner:@"usage: expected [OPTIONS]"];
+                [os setValue:@"usage: expected [OPTIONS]" forKey:@"banner"];
 
-                [[[options description] should] equal:usage];
+                [[os.description should] equal:usage];
             });
         });
 
         context(@"help", ^{
             beforeEach(^{
-                [options setBanner:@"usage: app [options]"];
-                [options addOption:"a-really-long-option-that-overflows" flag:0 description:@"Is described over here" value:NULL];
-                [options addOption:NULL flag:'0' description:nil value:NULL];
-                [options addSeparator];
-                [options addSeparator:@"Other options:"];
-                [options addOption:"version" flag:0 description:@"Show version" value:NULL];
-                [options addOption:"help" flag:'h' description:@"Show this screen" value:NULL];
+                [os setValue:@"usage: app [options]" forKey:@"banner"];
+                [os addOpt:"a-really-long-option-that-overflows" flag:0 desc:@"Is described over here" value:NULL];
+                [os addOpt:NULL flag:'0' desc:nil value:NULL];
+                [os addSeparator];
+                [os addSeparator:@"Other options:"];
+                [os addOpt:"version" flag:0 desc:@"Show version" value:NULL];
+                [os addOpt:"help" flag:'h' desc:@"Show this screen" value:NULL];
             });
 
             it(@"prints and formats options", ^{
@@ -272,15 +271,15 @@ describe(@"BRLOptionParser", ^{
                 @"        --version                    Show version\n"
                 @"    -h, --help                       Show this screen\n";
 
-                [[[options description] should] equal:usage];
+                [[[os description] should] equal:usage];
             });
 
             context(@"long-only", ^{
                 beforeEach(^{
-                    options.longOnly = YES;
+                    os.longOnly = YES;
                 });
 
-                it(@"prints and formats long options with a single hyphen", ^{
+                it(@"prints and formats long os with a single hyphen", ^{
                     NSString *usage =
                     @"usage: app [options]\n"
                     @"        -a-really-long-option-that-overflows\n"
@@ -291,7 +290,7 @@ describe(@"BRLOptionParser", ^{
                     @"        -version                    Show version\n"
                     @"    -h, -help                       Show this screen\n";
 
-                    [[[options description] should] equal:usage];
+                    [[[os description] should] equal:usage];
                 });
             });
         });
