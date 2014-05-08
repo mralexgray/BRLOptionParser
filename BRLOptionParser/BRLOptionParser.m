@@ -26,8 +26,8 @@
 
 
 typedef NS_ENUM(NSUInteger, BRLOptionArgument) {
-    BRLOptionArgumentNone = no_argument,
-    BRLOptionArgumentRequired = required_argument
+  BRLOptionArgumentNone = no_argument,
+  BRLOptionArgumentRequired = required_argument
 };
 
 
@@ -39,36 +39,36 @@ typedef NS_ENUM(NSUInteger, BRLOptionArgument) {
 @property (strong) NSString *description;
 @property (copy) id block;
 
-+ (instancetype)optionWithName:(char *)name flag:(unichar)flag description:(NSString *)description block:(BRLOptionParserOptionBlock)block;
-+ (instancetype)optionWithName:(char *)name flag:(unichar)flag description:(NSString *)description blockWithArgument:(BRLOptionParserOptionBlockWithArgument)blockWithArgument;
++ (instancetype)optionWithName:(char*)n flag:(unichar)f description:(NSString*)d block:(BRLOptionParserOptionBlock)block;
++ (instancetype)optionWithName:(char*)n flag:(unichar)f description:(NSString*)d blockWithArgument:(BRLOptionParserOptionBlockWithArgument)blockWithArgument;
 
 @end
 
 
 @implementation BRLOption
 
-+ (instancetype)optionWithName:(char *)name flag:(unichar)flag description:(NSString *)description block:(BRLOptionParserOptionBlock)block
++ (instancetype)optionWithName:(char*)n flag:(unichar)f description:(NSString*)d block:(BRLOptionParserOptionBlock)b
 {
-    BRLOption *option = [[self alloc] initWithName:name flag:flag description:description argument:BRLOptionArgumentNone block:block];
-    return option;
+  BRLOption *option = [[self alloc] initWithName:n flag:f description:d argument:BRLOptionArgumentNone block:b];
+  return option;
 }
 
-+ (instancetype)optionWithName:(char *)name flag:(unichar)flag description:(NSString *)description blockWithArgument:(BRLOptionParserOptionBlockWithArgument)blockWithArgument
++ (instancetype)optionWithName:(char*)n flag:(unichar)f description:(NSString*)d blockWithArgument:(BRLOptionParserOptionBlockWithArgument)blockWithArgument
 {
-    BRLOption *option = [[self alloc] initWithName:name flag:flag description:description argument:BRLOptionArgumentRequired block:blockWithArgument];
-    return option;
+  BRLOption *option = [[self alloc] initWithName:n flag:f description:d argument:BRLOptionArgumentRequired block:blockWithArgument];
+  return option;
 }
 
-- (instancetype)initWithName:(char *)name flag:(unichar)flag description:(NSString *)description argument:(BRLOptionArgument)argument block:(id)block
+- (instancetype)initWithName:(char*)n flag:(unichar)f description:(NSString*)d argument:(BRLOptionArgument)argument block:(id)b
 {
-    if (self = [super init]) {
-        self.argument = argument;
-        self.name = name;
-        self.flag = flag;
-        self.block = block;
-        self.description = description;
-    }
-    return self;
+  if (self = [super init]) {
+    self.argument = argument;
+    self.name = n;
+    self.flag = f;
+    self.block = b;
+    self.description = d;
+  }
+  return self;
 }
 
 @end
@@ -85,220 +85,201 @@ typedef NS_ENUM(NSUInteger, BRLOptionArgument) {
 
 + (instancetype)parser
 {
-    return [self new];
+  return [self new];
 }
 
 + (instancetype)longOnlyParser
 {
-    BRLOptionParser *parser = [self parser];
-    if (parser) {
-        parser.longOnly = YES;
-    }
-    return parser;
+  BRLOptionParser *parser = [self parser];
+  if (parser) {
+    parser.longOnly = YES;
+  }
+  return parser;
 }
 
 - (id)init
 {
-    if (self = [super init]) {
-        [self setBanner:@"usage: %@ [options]", [[NSProcessInfo processInfo] processName]];
-        self.options = [NSMutableArray array];
-    }
-    return self;
+  if (self = [super init]) {
+    [self setBanner:@"usage: %@ [options]", [[NSProcessInfo processInfo] processName]];
+    self.options = [NSMutableArray array];
+  }
+  return self;
 }
 
 - (void)setBanner:(NSString *)banner, ...
 {
-    va_list args;
-    va_start(args, banner);
-    _banner = [[NSString alloc] initWithFormat:banner arguments:args];
-    va_end(args);
-    return;
+  va_list args;
+  va_start(args, banner);
+  _banner = [[NSString alloc] initWithFormat:banner arguments:args];
+  va_end(args);
+  return;
 }
 
-- (void)addOption:(char *)option flag:(unichar)flag description:(NSString *)description block:(BRLOptionParserOptionBlock)block
+- (void)addOption:(char*)o flag:(unichar)f description:(NSString*)d block:(BRLOptionParserOptionBlock)b
 {
-    [self.options addObject:[BRLOption optionWithName:option flag:flag description:description block:block]];
+  [self.options addObject:[BRLOption optionWithName:o flag:f description:d block:b]];
 }
 
-- (void)addOption:(char *)option flag:(unichar)flag description:(NSString *)description blockWithArgument:(BRLOptionParserOptionBlockWithArgument)blockWithArgument
+- (void)addOption:(char*)o flag:(unichar)f description:(NSString*)d blockWithArgument:(BRLOptionParserOptionBlockWithArgument)blockWithArgument
 {
-    [self.options addObject:[BRLOption optionWithName:option flag:flag description:description blockWithArgument:blockWithArgument]];
+  [self.options addObject:[BRLOption optionWithName:o flag:f description:d blockWithArgument:blockWithArgument]];
 }
 
-- (void)addOption:(char *)option flag:(unichar)flag description:(NSString *)description value:(BOOL *)value
+- (void)addOption:(char*)o flag:(unichar)f description:(NSString*)d value:(BOOL *)value
 {
-    [self addOption:option flag:flag description:description block:^{
-        *value = YES;
-    }];
+  [self addOption:o flag:f description:d block:^{  *value = YES; }];
 }
 
-- (void)addOption:(char *)option flag:(unichar)flag description:(NSString *)description argument:(NSString *__strong *)argument
+- (void)addOption:(char*)o flag:(unichar)f description:(NSString*)d argument:(NSString *__strong *)argument
 {
-    [self addOption:option flag:flag description:description blockWithArgument:^(NSString *value) {
-        *argument = value;
-    }];
+  [self addOption:o flag:f description:d blockWithArgument:^(NSString *value) { *argument = value; }];
 }
 
-- (void)addSeparator
-{
-    [self addSeparator:nil];
-}
+- (void)addSeparator { [self addSeparator:nil]; }
 
-- (void)addSeparator:(NSString *)separator
-{
-    if (separator == nil) {
-        separator = @"";
-    }
-    [self.options addObject:separator];
-}
+- (void)addSeparator:(NSString *)s { [self.options addObject:!s ? @" " : s]; }
 
 - (BOOL)parseArgc:(int)argc argv:(const char **)argv error:(NSError *__autoreleasing *)error
 {
-    NSMapTable *mapTable = NSCreateMapTable(NSIntegerMapKeyCallBacks, NSNonRetainedObjectMapValueCallBacks, [self.options count]);
+  NSMapTable *mapTable = NSCreateMapTable(NSIntegerMapKeyCallBacks, NSNonRetainedObjectMapValueCallBacks, [self.options count]);
 
-    NSUInteger i = 0;
-    NSUInteger c = 0;
+  NSUInteger i = 0;
+  NSUInteger c = 0;
 
-    struct option * long_options = malloc(([self.options count] + 1) * sizeof(struct option));
-    char * short_options = malloc((([self.options count] * 2) + 1) * sizeof(char));
+  struct option * long_options = malloc(([self.options count] + 1) * sizeof(struct option));
+  char * short_options = malloc((([self.options count] * 2) + 1) * sizeof(char));
 
-    for (id each in self.options) {
-        if (![each isKindOfClass:[BRLOption class]]) {
-            continue;
-        }
-        BRLOption *option = each;
-        if (option.name) {
-            NSMapInsert(mapTable, (const void *)option.name, (__bridge void *)option);
-            long_options[i++] = (struct option){option.name, option.argument, NULL, option.flag};
-        }
-        if (option.flag) {
-            NSMapInsert(mapTable, (const void *)(NSUInteger)option.flag, (__bridge void *)option);
-            short_options[c++] = option.flag;
-            if (option.argument == BRLOptionArgumentRequired) {
-                short_options[c++] = ':';
-            };
-        }
+  for (BRLOption *option in self.options) { if (![option isKindOfClass:BRLOption.class])  continue;
+
+    if (option.name) {
+      NSMapInsert(mapTable, (const void *)option.name, (__bridge void *)option);
+      long_options[i++] = (struct option){option.name, option.argument, NULL, option.flag};
     }
-    long_options[i] = (struct option){0, 0, 0, 0};
-    short_options[c] = '\0';
+    if (option.flag) {
+      NSMapInsert(mapTable, (const void *)(NSUInteger)option.flag, (__bridge void *)option);
+      short_options[c++] = option.flag;
+      if (option.argument == BRLOptionArgumentRequired) {
+        short_options[c++] = ':';
+      };
+    }
+  }
+  long_options[i] = (struct option){0, 0, 0, 0};
+  short_options[c] = '\0';
 
-    int ch = 0;
-    int long_options_index = 0;
+  int ch = 0;
+  int long_options_index = 0;
 
-    opterr = 0;
+  opterr = 0;
 
-    int (* getopt_long_method)(int, char * const *, const char *, const struct option *, int *);
-    getopt_long_method = self.isLongOnly ? &getopt_long_only : &getopt_long;
+  int (* getopt_long_method)(int, char * const *, const char *, const struct option *, int *);
+  getopt_long_method = self.isLongOnly ? &getopt_long_only : &getopt_long;
 
-    int cached_optind = optind;
-    while ((ch = getopt_long_method(argc, (char **)argv, short_options, long_options, &long_options_index)) != -1) {
-        @try {
-            BRLOption *option = nil;
+  int cached_optind = optind;
+  while ((ch = getopt_long_method(argc, (char **)argv, short_options, long_options, &long_options_index)) != -1) {
+    @try {
+      BRLOption *option = nil;
 
-            switch (ch) {
-                case '?': {
-                    if (error) {
-                        // I wish this could be done more cleanly, but getopt doesn't appear to expose the current failing option as originally input.
-                        NSString *arg = [NSString stringWithUTF8String:argv[cached_optind]];
-                        if ([arg hasPrefix:[self longPrefix]]) {
-                            arg = [[arg componentsSeparatedByString:@"="] firstObject];
-                        } else if (optopt) {
-                            arg = [NSString stringWithFormat:@"-%c", optopt];
-                        }
-
-                        if (optopt) {
-                            option = (__bridge BRLOption *)NSMapGet(mapTable, (const void *)(NSUInteger)optopt);
-                        } else {
-                            NSString *longOption = [NSString stringWithFormat:@"%@%s", [self longPrefix], long_options[long_options_index].name];
-                            if ([arg isEqualToString:longOption]) {
-                                option = (__bridge BRLOption *)NSMapGet(mapTable, (const void *)long_options[long_options_index].name);
-                            }
-                        }
-
-                        if (option && option.argument == BRLOptionArgumentRequired) {
-                            *error = [NSError errorWithDomain:BRLOptionParserErrorDomain code:BRLOptionParserErrorCodeRequired userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"option `%@' requires an argument", arg]}];
-                        } else {
-                            *error = [NSError errorWithDomain:BRLOptionParserErrorDomain code:BRLOptionParserErrorCodeUnrecognized userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"unrecognized option `%@'", arg]}];
-                        }
-                    }
-                    return NO;
-                    break;
-                }
-                case ':':
-
-                    break;
-                case 0:
-                    option = (__bridge BRLOption *)NSMapGet(mapTable, (const void *)long_options[long_options_index].name);
-                    break;
-                default: {
-                    option = (__bridge BRLOption *)NSMapGet(mapTable, (const void *)(NSUInteger)ch);
-                    break;
-                }
+      switch (ch) {
+        case '?': {
+          if (error) {
+            // I wish this could be done more cleanly, but getopt doesn't appear to expose the current failing option as originally input.
+            NSString *arg = @(argv[cached_optind]);
+            if ([arg hasPrefix:[self longPrefix]]) {
+              arg = [[arg componentsSeparatedByString:@"="] firstObject];
+            } else if (optopt) {
+              arg = [NSString stringWithFormat:@"-%c", optopt];
             }
 
-            if (option.argument == BRLOptionArgumentRequired) {
-                BRLOptionParserOptionBlockWithArgument block = option.block;
-                block([NSString stringWithUTF8String:optarg]);
+            if (optopt) {
+              option = (__bridge BRLOption *)NSMapGet(mapTable, (const void *)(NSUInteger)optopt);
             } else {
-                BRLOptionParserOptionBlock block = option.block;
-                block();
+              NSString *longOption = [NSString stringWithFormat:@"%@%s", [self longPrefix], long_options[long_options_index].name];
+              if ([arg isEqualToString:longOption]) {
+                option = (__bridge BRLOption *)NSMapGet(mapTable, (const void *)long_options[long_options_index].name);
+              }
             }
-        } @finally {
-            cached_optind = optind;
-        }
-    }
 
-    return YES;
+            if (option && option.argument == BRLOptionArgumentRequired) {
+              *error = [NSError errorWithDomain:BRLOptionParserErrorDomain code:BRLOptionParserErrorCodeRequired userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"option `%@' requires an argument", arg]}];
+            } else {
+              *error = [NSError errorWithDomain:BRLOptionParserErrorDomain code:BRLOptionParserErrorCodeUnrecognized userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"unrecognized option `%@'", arg]}];
+            }
+          }
+          return NO;
+          break;
+        }
+        case ':':
+
+          break;
+        case 0:
+          option = (__bridge BRLOption *)NSMapGet(mapTable, (const void *)long_options[long_options_index].name);
+          break;
+        default: {
+          option = (__bridge BRLOption *)NSMapGet(mapTable, (const void *)(NSUInteger)ch);
+          break;
+        }
+      }
+
+      if (option.argument == BRLOptionArgumentRequired) {
+        BRLOptionParserOptionBlockWithArgument block = option.block;
+        block(@(optarg));
+      } else {
+        BRLOptionParserOptionBlock block = option.block;
+        block();
+      }
+    } @finally {
+      cached_optind = optind;
+    }
+  }
+
+  return YES;
 }
 
-- (NSString *)description
+- (NSString*)d
 {
-    NSMutableString *(^trimLine)(NSMutableString *) = ^NSMutableString *(NSMutableString *line) {
-        NSRange range = [line rangeOfCharacterFromSet:[[NSCharacterSet whitespaceCharacterSet] invertedSet] options:NSBackwardsSearch];
-        if (range.location != NSNotFound) {
-            line = [[line substringToIndex:range.location + 1] mutableCopy];
-        }
-        return line;
-    };
-
-    NSMutableArray *description = [NSMutableArray arrayWithObject:self.banner];
-    for (id each in self.options) {
-        NSMutableString *line = [NSMutableString string];
-        if ([each isKindOfClass:[BRLOption class]]) {
-            BRLOption *option = each;
-            [line appendString:@"    "];
-            if (option.flag) {
-                [line appendFormat:@"-%c", option.flag];
-                [line appendString:option.name ? @", " : @"  "];
-            } else {
-                [line appendString:@"    "];
-            }
-            if (option.name) {
-                [line appendFormat:@"%@%-24s   ", [self longPrefix], option.name];
-            } else {
-                [line appendString:@"                             "];
-            }
-            if ([line length] > 37) {
-                line = trimLine(line);
-                [line appendString:@"\n                                     "];
-            }
-            if (option.description) {
-                [line appendString:option.description];
-            }
-            line = trimLine(line);
-        } else {
-            [line appendFormat:@"%@", each];
-        }
-        [description addObject:line];
+  NSMutableString *(^trimLine)(NSMutableString *) = ^NSMutableString *(NSMutableString *line) {
+    NSRange range = [line rangeOfCharacterFromSet:[[NSCharacterSet whitespaceCharacterSet] invertedSet] options:NSBackwardsSearch];
+    if (range.location != NSNotFound) {
+      line = [[line substringToIndex:range.location + 1] mutableCopy];
     }
-    return [[description componentsJoinedByString:@"\n"] stringByAppendingString:@"\n"];
+    return line;
+  };
+
+  NSMutableArray *description = [NSMutableArray arrayWithObject:self.banner];
+  for (id each in self.options) {
+    NSMutableString *line = [NSMutableString string];
+    if ([each isKindOfClass:[BRLOption class]]) {
+      BRLOption *option = each;
+      [line appendString:@"    "];
+      if (option.flag) {
+        [line appendFormat:@"-%c", option.flag];
+        [line appendString:option.name ? @", " : @"  "];
+      } else {
+        [line appendString:@"    "];
+      }
+      if (option.name) {
+        [line appendFormat:@"%@%-24s   ", [self longPrefix], option.name];
+      } else {
+        [line appendString:@"                             "];
+      }
+      if ([line length] > 37) {
+        line = trimLine(line);
+        [line appendString:@"\n                                     "];
+      }
+      if (option.description) {
+        [line appendString:option.description];
+      }
+      line = trimLine(line);
+    } else {
+      [line appendFormat:@"%@", each];
+    }
+    [description addObject:line];
+  }
+  return [[description componentsJoinedByString:@"\n"] stringByAppendingString:@"\n"];
 }
 
 #pragma mark -
 
-- (NSString *)longPrefix
-{
-    return self.isLongOnly ? @"-" : @"--";
-}
+- (NSString *)longPrefix {  return self.isLongOnly ? @"-" : @"--"; }
 
 @end
