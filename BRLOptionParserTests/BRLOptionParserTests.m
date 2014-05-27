@@ -234,9 +234,9 @@ describe(@"BRLOptionParser", ^{
         context(@"banner", ^{
             it(@"prints by default", ^{
                 NSString *usage =
-                @"usage: xctest [options]\n";
+                @"usage: app [options]\n";
 
-                [[NSProcessInfo processInfo] stub:@selector(processName) andReturn:@"xctest"];
+                [[NSProcessInfo processInfo] stub:@selector(processName) andReturn:@"app"];
                 [[[os description] should] equal:usage];
             });
 

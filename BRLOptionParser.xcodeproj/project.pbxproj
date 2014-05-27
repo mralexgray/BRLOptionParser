@@ -7,9 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7B8F7DB2191B82CA00D03FE9 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B8F7DB1191B82CA00D03FE9 /* SenTestingKit.framework */; };
 		DCFF6F3B186D21E300BF640A /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DCFF6F3A186D21E300BF640A /* Cocoa.framework */; };
 		DCFF6F45186D21E300BF640A /* BRLOptionParser.m in Sources */ = {isa = PBXBuildFile; fileRef = DCFF6F44186D21E300BF640A /* BRLOptionParser.m */; };
-		DCFF6F4C186D21E300BF640A /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DCFF6F4B186D21E300BF640A /* XCTest.framework */; };
 		DCFF6F4D186D21E300BF640A /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DCFF6F3A186D21E300BF640A /* Cocoa.framework */; };
 		DCFF6F50186D21E300BF640A /* BRLOptionParser.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DCFF6F37186D21E300BF640A /* BRLOptionParser.dylib */; };
 		DCFF6F56186D21E300BF640A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = DCFF6F54186D21E300BF640A /* InfoPlist.strings */; };
@@ -29,6 +29,7 @@
 
 /* Begin PBXFileReference section */
 		0F26DB55E64B49E99E1661F2 /* Pods-BRLOptionParserTests.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BRLOptionParserTests.xcconfig"; path = "Pods/Pods-BRLOptionParserTests.xcconfig"; sourceTree = "<group>"; };
+		7B8F7DB1191B82CA00D03FE9 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
 		7D76A699FBFA4FE39F9BD0B2 /* libPods-BRLOptionParserTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-BRLOptionParserTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		DCFF6F37186D21E300BF640A /* BRLOptionParser.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = BRLOptionParser.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		DCFF6F3A186D21E300BF640A /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
@@ -58,9 +59,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7B8F7DB2191B82CA00D03FE9 /* SenTestingKit.framework in Frameworks */,
 				DCFF6F4D186D21E300BF640A /* Cocoa.framework in Frameworks */,
 				DCFF6F50186D21E300BF640A /* BRLOptionParser.dylib in Frameworks */,
-				DCFF6F4C186D21E300BF640A /* XCTest.framework in Frameworks */,
 				F499EA75C2E44DDB905C94B5 /* libPods-BRLOptionParserTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -91,6 +92,7 @@
 		DCFF6F39186D21E300BF640A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				7B8F7DB1191B82CA00D03FE9 /* SenTestingKit.framework */,
 				DCFF6F3A186D21E300BF640A /* Cocoa.framework */,
 				DCFF6F4B186D21E300BF640A /* XCTest.framework */,
 				DCFF6F3C186D21E300BF640A /* Other Frameworks */,
@@ -406,11 +408,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 0F26DB55E64B49E99E1661F2 /* Pods-BRLOptionParserTests.xcconfig */;
 			buildSettings = {
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/BRLOptionParser.dylib";
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
-					"$(inherited)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "BRLOptionParser/BRLOptionParser-Prefix.pch";
@@ -418,7 +419,14 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
+				GENERATE_MASTER_OBJECT_FILE = YES;
 				INFOPLIST_FILE = "BRLOptionParserTests/BRLOptionParserTests-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(SDKROOT)/Developer/Library/Frameworks\n$(DEVELOPER_LIBRARY_DIR)/Frameworks";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-framework",
+					XCTest,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
@@ -429,15 +437,21 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 0F26DB55E64B49E99E1661F2 /* Pods-BRLOptionParserTests.xcconfig */;
 			buildSettings = {
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/BRLOptionParser.dylib";
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
-					"$(inherited)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "BRLOptionParser/BRLOptionParser-Prefix.pch";
+				GENERATE_MASTER_OBJECT_FILE = YES;
 				INFOPLIST_FILE = "BRLOptionParserTests/BRLOptionParserTests-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(SDKROOT)/Developer/Library/Frameworks\n$(DEVELOPER_LIBRARY_DIR)/Frameworks";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-framework",
+					XCTest,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
